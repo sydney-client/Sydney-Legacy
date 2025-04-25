@@ -69,7 +69,7 @@ public class MaceAuraModule extends Module {
     public void onPlayerMove(PlayerMoveEvent event) {
         if (!movementAssist.getValue() || mc.player.isOnGround() || target == null) return;
         if (mc.player.distanceTo(target) <= attackRange.getValue().floatValue()) return;
-        if (!timer.hasTimeElapsed(delay.getValue().longValue())) return;  // :contentReference[oaicite:0]{index=0}
+        if (!timer.hasTimeElapsed(delay.getValue().longValue())) return; 
 
         Vec3d vec3d = PositionUtils.extrapolate(target, extrapolation.getValue().intValue()).getCenter();
         MovementUtils.moveTowards(event, vec3d, MovementUtils.getPotionSpeed(MovementUtils.DEFAULT_SPEED));

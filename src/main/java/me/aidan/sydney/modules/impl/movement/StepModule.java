@@ -38,8 +38,7 @@ public class StepModule extends Module {
         if (!mode.getValue().equalsIgnoreCase("NCP")) return;
 
         double stepHeight = mc.player.getY() - mc.player.prevY;
-        if (stepHeight <= 0.75 || stepHeight > height.getValue().doubleValue())
-            return;
+        if (stepHeight <= 0.75 || stepHeight > height.getValue().doubleValue()) return;
 
         double[] offsets = getOffset(stepHeight);
         if (offsets != null && offsets.length > 1) {
@@ -61,7 +60,7 @@ public class StepModule extends Module {
 
     public double[] getOffset(double height) {
         return switch ((int) (height * 10000)) {
-            case 7500, 10000 -> new double[]{0.42, 0.753};
+            case 7500, 10000 -> new double[]{0.42, 0.753, 1.0};
             case 8125, 8750 -> new double[]{0.39, 0.7};
             case 15000 -> new double[]{0.42, 0.75, 1.0, 1.16, 1.23, 1.2};
             case 20000 -> new double[]{0.42, 0.78, 0.63, 0.51, 0.9, 1.21, 1.45, 1.43};

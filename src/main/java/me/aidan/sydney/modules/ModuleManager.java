@@ -6,8 +6,11 @@ import me.aidan.sydney.Sydney;
 import me.aidan.sydney.events.SubscribeEvent;
 import me.aidan.sydney.events.impl.KeyInputEvent;
 import me.aidan.sydney.events.impl.MouseInputEvent;
+import me.aidan.sydney.events.impl.TickEvent;
 import me.aidan.sydney.settings.Setting;
 import me.aidan.sydney.utils.IMinecraft;
+import net.minecraft.client.util.InputUtil;
+import org.lwjgl.glfw.GLFW;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Field;
@@ -40,6 +43,7 @@ public class ModuleManager implements IMinecraft {
                 module.getSettings().add(module.chatNotify);
                 module.getSettings().add(module.drawn);
                 module.getSettings().add(module.bind);
+                module.getSettings().add(module.bindMode);
 
                 modules.add(module);
                 moduleClasses.put(module.getClass(), module);
@@ -54,6 +58,7 @@ public class ModuleManager implements IMinecraft {
     @SubscribeEvent
     public void onKeyInput(KeyInputEvent event) {
         modules.stream()
+                .filter(m -> Module.BIND_MODE_TOGGLE.equalsIgnoreCase(m.getBindMode()))
                 .filter(m -> m.getBind() == event.getKey())
                 .forEach(m -> m.setToggled(!m.isToggled()));
     }
@@ -61,8 +66,30 @@ public class ModuleManager implements IMinecraft {
     @SubscribeEvent
     public void onMouseInput(MouseInputEvent event) {
         modules.stream()
+                .filter(m -> Module.BIND_MODE_TOGGLE.equalsIgnoreCase(m.getBindMode()))
                 .filter(m -> m.getBind() == (-event.getButton() - 1))
                 .forEach(m -> m.setToggled(!m.isToggled()));
+    }
+
+    @SubscribeEvent
+    public void onTick(TickEvent event) {
+        for (Module module : modules) {
+            if (module.getBind() == 0 || Module.BIND_MODE_TOGGLE.equalsIgnoreCase(module.getBindMode())) continue;
+
+            boolean pressed = isBindPressed(module.getBind());
+            boolean toggled = Module.BIND_MODE_HOLD.equalsIgnoreCase(module.getBindMode()) ? pressed : !pressed;
+            module.setToggled(toggled);
+        }
+    }
+
+    private boolean isBindPressed(int bind) {
+        long handle = mc.getWindow().getHandle();
+
+        if (bind < 0) {
+            return GLFW.glfwGetMouseButton(handle, -bind - 1) == GLFW.GLFW_PRESS;
+        }
+
+        return InputUtil.isKeyPressed(handle, bind);
     }
 
     public List<Module> getModules(Module.Category category) {

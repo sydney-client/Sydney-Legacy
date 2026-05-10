@@ -17,6 +17,10 @@ import java.util.List;
 
 @Getter
 public abstract class Module implements IMinecraft {
+    public static final String BIND_MODE_TOGGLE = "Toggle";
+    public static final String BIND_MODE_HOLD = "Hold";
+    public static final String BIND_MODE_REVERSE_HOLD = "Reverse Hold";
+
     private final String name, description;
     private final Category category;
 
@@ -27,6 +31,7 @@ public abstract class Module implements IMinecraft {
     public BooleanSetting chatNotify;
     public BooleanSetting drawn;
     public BindSetting bind;
+    public ModeSetting bindMode;
 
     private final Animation animationOffset;
 
@@ -43,7 +48,8 @@ public abstract class Module implements IMinecraft {
 
         chatNotify = new BooleanSetting("ChatNotify", "Notifies you in chat whenever the module gets toggled on or off.", true);
         drawn = new BooleanSetting("Drawn", "Renders the module's name on the HUD's module list.", annotation.drawn());
-        bind = new BindSetting("Bind", "The keybind that toggles the module on and off.", annotation.bind());
+        bind = new BindSetting("Bind", "The keybind used to control the module.", annotation.bind());
+        bindMode = new ModeSetting("BindMode", "How the module responds to its bind.", BIND_MODE_TOGGLE, new String[]{BIND_MODE_TOGGLE, BIND_MODE_HOLD, BIND_MODE_REVERSE_HOLD});
 
         if (persistent) toggled = true;
         if (toggled) {
@@ -100,6 +106,10 @@ public abstract class Module implements IMinecraft {
 
     public void setBind(int bind) {
         this.bind.setValue(bind);
+    }
+
+    public String getBindMode() {
+        return bindMode.getValue();
     }
 
     public void resetValues() {

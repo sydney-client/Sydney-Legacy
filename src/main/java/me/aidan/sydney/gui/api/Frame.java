@@ -39,10 +39,16 @@ public class Frame {
         }
 
         this.totalHeight = height;
+        boolean showButtons = open || Sydney.CLICK_GUI.hasModuleSearchQuery();
 
-        if(open) {
+        if(showButtons) {
             totalHeight += 1;
             for(Button button : buttons) {
+                if (button instanceof ModuleButton moduleButton) {
+                    button.setVisible(Sydney.CLICK_GUI.matchesModuleSearch(moduleButton.getModule()));
+                }
+
+                if(!button.isVisible()) continue;
                 button.setX(x);
                 button.setY(y + totalHeight);
                 totalHeight += button.getHeight();
@@ -64,10 +70,11 @@ public class Frame {
         Renderer2D.renderQuad(context.getMatrices(), x, y, x + width, y + height, ClickGuiScreen.getButtonColor(y, 100));
         Sydney.FONT_MANAGER.drawTextWithShadow(context, category.getName(), x + textPadding, y + 2, Color.WHITE);
 
-        if(open) {
+        if(showButtons) {
             Color color = Sydney.MODULE_MANAGER.getModule(ClickGuiModule.class).color.getColor();
             Renderer2D.renderQuad(context.getMatrices(), x, y + height, x + width, y + totalHeight + 1, Sydney.MODULE_MANAGER.getModule(ClickGuiModule.class).isRainbow() ? new Color(0, 0, 0, 100) : new Color((int) (color.getRed()*0.3), (int) (color.getGreen()*0.3), (int) (color.getBlue()*0.3), 100));
             for(Button button : buttons) {
+                if(!button.isVisible()) continue;
                 button.render(context, mouseX, mouseY, delta);
             }
         }
@@ -84,8 +91,11 @@ public class Frame {
             }
         }
 
-        if(open) {
-            for(Button b : buttons) b.mouseClicked(mouseX, mouseY, button);
+        if(open || Sydney.CLICK_GUI.hasModuleSearchQuery()) {
+            for(Button b : buttons) {
+                if(!b.isVisible()) continue;
+                b.mouseClicked(mouseX, mouseY, button);
+            }
         }
     }
 
@@ -94,7 +104,10 @@ public class Frame {
             dragging = false;
         }
 
-        for(Button b : buttons) b.mouseReleased(mouseX, mouseY, button);
+        for(Button b : buttons) {
+            if(!b.isVisible()) continue;
+            b.mouseReleased(mouseX, mouseY, button);
+        }
     }
 
     public void mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
@@ -104,6 +117,7 @@ public class Frame {
                 if (b instanceof ModuleButton moduleButton && moduleButton.isOpen()) {
                     List<Button> wbButtons = moduleButton.getButtons().stream().filter(button -> button instanceof WhitelistButton).toList();
                     for (Button whitelistButton : wbButtons) {
+                        if (!moduleButton.isVisible()) continue;
                         if (whitelistButton instanceof WhitelistButton wb) {
                             if (wb.isHandlingScroll(mouseX, mouseY)) {
                                 wb.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
@@ -126,20 +140,26 @@ public class Frame {
 
     public void mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         for (Button b : buttons) {
-
+            if(!b.isVisible()) continue;
             b.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
         }
     }
 
     public void keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (open) {
-            for (Button button : buttons) button.keyPressed(keyCode, scanCode, modifiers);
+        if (open || Sydney.CLICK_GUI.hasModuleSearchQuery()) {
+            for (Button button : buttons) {
+                if(!button.isVisible()) continue;
+                button.keyPressed(keyCode, scanCode, modifiers);
+            }
         }
     }
 
     public void charTyped(char chr, int modifiers) {
-        if (open) {
-            for (Button button : buttons) button.charTyped(chr, modifiers);
+        if (open || Sydney.CLICK_GUI.hasModuleSearchQuery()) {
+            for (Button button : buttons) {
+                if(!button.isVisible()) continue;
+                button.charTyped(chr, modifiers);
+            }
         }
     }
 

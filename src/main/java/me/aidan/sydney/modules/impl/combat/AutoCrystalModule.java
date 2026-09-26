@@ -429,7 +429,7 @@ public class AutoCrystalModule extends Module {
 
         if (rotate.getValue().equalsIgnoreCase("Normal")) Sydney.ROTATION_MANAGER.rotate(calculateRotations(Vec3d.ofCenter(crystal.getBlockPos(), 0)), Sydney.ROTATION_MANAGER.getModulePriority(this));
 
-        if (!attackTimer.hasTimeElapsed(1000.0f - attackSpeed.getValue().floatValue() * 50.0f) || attackedSequentially) {
+        if (!attackTimer.hasTimeElapsed(1000.0f - attackSpeed.getValue().floatValue() * 50.0f) || (attackedSequentially && !inhibit.getValue())) {
             if (attackedSequentially) attackedSequentially = false;
             return;
         }

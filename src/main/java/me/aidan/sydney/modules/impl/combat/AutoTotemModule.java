@@ -18,6 +18,8 @@ import net.minecraft.item.AxeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.item.SwordItem;
+import net.minecraft.screen.slot.Slot;
+import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.math.MathHelper;
 
 @RegisterModule(name = "AutoTotem", description = "Automatically puts a specified item in your offhand slot.", category = Module.Category.COMBAT)
@@ -29,6 +31,7 @@ public class AutoTotemModule extends Module {
     public BooleanSetting useGapple = new BooleanSetting("UseGapple", "Switches to a golden apple in your offhand when holding right click and holding a sword.", true);
     public BooleanSetting lethalOverride = new BooleanSetting("LethalOverride", "Overrides any necessity for a totem when right-click gappling.", new BooleanSetting.Visibility(useGapple, true), false);
     public BooleanSetting tickAbort = new BooleanSetting("TickAbort", "Enable the interval between switching item which is determine by player ping", true);
+    public NumberSetting delay = new NumberSetting("Delay", "The time in milliseconds to wait before switching the offhand item again.", 150, 0, 1000);
     public BooleanSetting smartMine = new BooleanSetting("SmartMine", "Switches to a crystal whenever you start mining and a totem when you aren't mining.", new ModeSetting.Visibility(item, "Crystal"), false);
     public BooleanSetting antiMace = new BooleanSetting("AntiMace", "Switches to a totem if a player near you is trying to smash attack you with a mace.", false);
     public NumberSetting maceRange = new NumberSetting("MaceRange", "The distance at which an enemy has to be in with a mace in order to swap to a totem.", new BooleanSetting.Visibility(antiMace, true), 12.0f, 0.0f, 24.0f);
@@ -45,13 +48,10 @@ public class AutoTotemModule extends Module {
 
     @SubscribeEvent
     public void onPlayerUpdate(PlayerUpdateEvent event) {
-        if (ticks > 0 && tickAbort.getValue()) {
+        if (ticks > 0) {
             ticks--;
             return;
         }
-
-        if (!(mc.currentScreen instanceof InventoryScreen) && mc.currentScreen instanceof HandledScreen<?>)
-            return;
 
         Item item = getItem();
         if (item == null) return;
@@ -76,8 +76,12 @@ public class AutoTotemModule extends Module {
 
         if (slot == -1) return;
 
-        InventoryUtils.swap("Pickup", slot, 45);
-        ticks = 2 + Sydney.SERVER_MANAGER.getPingDelay();
+        if (mc.currentScreen instanceof HandledScreen<?>) swapFromPlayerInventory(slot);
+        else InventoryUtils.swap("Pickup", slot, 45);
+
+        int delayTicks = (int) Math.ceil(delay.getValue().doubleValue() / 50.0);
+        int pingDelay = tickAbort.getValue() ? 2 + Sydney.SERVER_MANAGER.getPingDelay() : 0;
+        ticks = pingDelay + delayTicks;
     }
 
     @SubscribeEvent
@@ -128,6 +132,15 @@ public class AutoTotemModule extends Module {
 
     private boolean hasItem(Item item) {
         return InventoryUtils.find(item) != -1 || mc.player.getOffHandStack().getItem() == item;
+    }
+
+    private void swapFromPlayerInventory(int inventorySlot) {
+        for (Slot slot : mc.player.currentScreenHandler.slots) {
+            if (slot.inventory != mc.player.getInventory() || slot.getIndex() != inventorySlot) continue;
+
+            mc.interactionManager.clickSlot(mc.player.currentScreenHandler.syncId, slot.id, 40, SlotActionType.SWAP, mc.player);
+            return;
+        }
     }
 
     @Override

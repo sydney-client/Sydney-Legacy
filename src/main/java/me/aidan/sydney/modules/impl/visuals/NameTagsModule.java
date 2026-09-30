@@ -7,9 +7,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import me.aidan.sydney.Sydney;
 import me.aidan.sydney.events.SubscribeEvent;
 import me.aidan.sydney.events.impl.RenderWorldEvent;
-import me.aidan.sydney.mixins.accessors.ItemRenderStateAccessor;
-import me.aidan.sydney.mixins.accessors.ItemRendererAccessor;
-import me.aidan.sydney.mixins.accessors.LayerRenderStateAccessor;
 import me.aidan.sydney.modules.Module;
 import me.aidan.sydney.modules.RegisterModule;
 import me.aidan.sydney.modules.impl.miscellaneous.FakePlayerModule;
@@ -23,8 +20,6 @@ import me.aidan.sydney.utils.graphics.Renderer3D;
 import me.aidan.sydney.utils.minecraft.EntityUtils;
 import me.aidan.sydney.utils.text.CustomFormatting;
 import net.minecraft.client.render.*;
-import net.minecraft.client.render.item.ItemRenderState;
-import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
@@ -33,11 +28,10 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.ModelTransformationMode;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.MatrixUtil;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 
@@ -65,8 +59,6 @@ public class NameTagsModule extends Module {
     public ModeSetting border = new ModeSetting("Border", "The border that will surround the text.", "Both", new String[]{"None", "Fill", "Outline", "Both"});
     public ColorSetting fillColor = new ColorSetting("FillColor", "The color that will be used for the fill rendering.", new ModeSetting.Visibility(border, "Fill", "Both"), new ColorSetting.Color(new Color(0, 0, 0, 100), false, false));
     public ColorSetting outlineColor = new ColorSetting("OutlineColor", "The color that will be used for the outline rendering.", new ModeSetting.Visibility(border, "Outline", "Both"), new ColorSetting.Color(new Color(0, 0, 0, 100), false, false));
-
-    private final ItemRenderState itemRenderState = new ItemRenderState();
 
     @SubscribeEvent
     public void onRenderWorld(RenderWorldEvent.Post event) {
@@ -134,8 +126,6 @@ public class NameTagsModule extends Module {
                 int stackY = -Sydney.FONT_MANAGER.getHeight() - 1 - (items.getValue() ? 18 + maxEnchants : 1);
 
                 if (items.getValue()) {
-                    ((ItemRendererAccessor) mc.getItemRenderer()).getItemModelManager().update(itemRenderState, stack, ModelTransformationMode.GUI, false, mc.world, mc.player, 0);
-
                     matrices.push();
                     matrices.translate(stackX + 8, stackY + 8, 0);
                     matrices.scale(16.0F, -16.0F, -0.001f);
@@ -143,34 +133,7 @@ public class NameTagsModule extends Module {
                     RenderSystem.enableBlend();
                     RenderSystem.defaultBlendFunc();
                     GL11.glDepthFunc(GL11.GL_ALWAYS);
-
-                    for (int j = 0; j < ((ItemRenderStateAccessor) itemRenderState).getLayerCount(); j++) {
-                        ItemRenderState.LayerRenderState layer = ((ItemRenderStateAccessor) itemRenderState).getLayers()[j];
-
-                        matrices.push();
-                        ((LayerRenderStateAccessor) layer).getModel().getTransformation().getTransformation(ModelTransformationMode.GUI).apply(false, matrices);
-                        matrices.translate(-0.5F, -0.5F, -0.5F);
-
-                        if (((LayerRenderStateAccessor) layer).getSpecialModelType() != null) {
-                            ((LayerRenderStateAccessor) layer).getSpecialModelType().render(((LayerRenderStateAccessor) layer).getData(), ModelTransformationMode.GUI, matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, ((LayerRenderStateAccessor) layer).getGlint() != ItemRenderState.Glint.NONE);
-                        } else if (((LayerRenderStateAccessor) layer).getModel() != null) {
-                            VertexConsumer vertexConsumer;
-                            RenderLayer renderLayer = RenderLayer.getGuiTextured(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
-
-                            if (((LayerRenderStateAccessor) layer).getGlint() == ItemRenderState.Glint.SPECIAL) {
-                                MatrixStack.Entry entry = matrices.peek().copy();
-                                MatrixUtil.scale(entry.getPositionMatrix(), 0.5F);
-
-                                vertexConsumer = ItemRendererAccessor.invokeGetDynamicDisplayGlintConsumer(vertexConsumers, renderLayer, entry);
-                            } else {
-                                vertexConsumer = ItemRenderer.getItemGlintConsumer(vertexConsumers, renderLayer, true, ((LayerRenderStateAccessor) layer).getGlint() != ItemRenderState.Glint.NONE);
-                            }
-
-                            ItemRendererAccessor.inovkeRenderBakedItemModel(((LayerRenderStateAccessor) layer).getModel(), ((LayerRenderStateAccessor) layer).getTints(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, matrices, vertexConsumer);
-                        }
-
-                        matrices.pop();
-                    }
+                    mc.getItemRenderer().renderItem(stack, ModelTransformationMode.GUI, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, matrices, vertexConsumers, mc.world, 0);
 
                     vertexConsumers.draw();
 

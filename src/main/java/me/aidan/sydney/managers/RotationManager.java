@@ -165,7 +165,7 @@ public class RotationManager implements IMinecraft {
 
     public void packetRotate(float yaw, float pitch) {
         if (serverYaw == yaw && serverPitch == pitch) return;
-        mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.Full(Sydney.POSITION_MANAGER.getServerX(), Sydney.POSITION_MANAGER.getServerY(), Sydney.POSITION_MANAGER.getServerZ(), yaw, pitch, Sydney.POSITION_MANAGER.isServerOnGround(), mc.player.horizontalCollision));
+        mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.Full(Sydney.POSITION_MANAGER.getServerX(), Sydney.POSITION_MANAGER.getServerY(), Sydney.POSITION_MANAGER.getServerZ(), yaw, pitch, Sydney.POSITION_MANAGER.isServerOnGround()));
     }
 
     public boolean inRenderTime() {

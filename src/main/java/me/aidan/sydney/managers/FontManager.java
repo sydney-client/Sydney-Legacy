@@ -63,10 +63,10 @@ public class FontManager implements IMinecraft {
             if (!Sydney.MODULE_MANAGER.getModule(FontModule.class).shadowMode.getValue().equalsIgnoreCase("None")) fontRenderer.drawString(matrices, text, x + getShadowOffset(), y + getShadowOffset(), color.getRGB(), true);
             fontRenderer.drawString(matrices, text, x, y, color.getRGB(), false);
         } else {
-            ((TextRendererAccessor) mc.textRenderer).invokeDrawLayer(text, x, y, TextRendererAccessor.invokeTweakTransparency(color.getRGB()), true, matrices.peek().getPositionMatrix(), vertexConsumers, TextRenderer.TextLayerType.SEE_THROUGH, 0, 0, false);
+            ((TextRendererAccessor) mc.textRenderer).invokeDrawLayer(text, x, y, TextRendererAccessor.invokeTweakTransparency(color.getRGB()), true, matrices.peek().getPositionMatrix(), vertexConsumers, TextRenderer.TextLayerType.SEE_THROUGH, 0, 0);
             mc.getBufferBuilders().getEntityVertexConsumers().draw();
 
-            ((TextRendererAccessor) mc.textRenderer).invokeDrawLayer(text, x, y, TextRendererAccessor.invokeTweakTransparency(color.getRGB()), false, matrices.peek().getPositionMatrix(), vertexConsumers, TextRenderer.TextLayerType.SEE_THROUGH, 0, 0, false);
+            ((TextRendererAccessor) mc.textRenderer).invokeDrawLayer(text, x, y, TextRendererAccessor.invokeTweakTransparency(color.getRGB()), false, matrices.peek().getPositionMatrix(), vertexConsumers, TextRenderer.TextLayerType.SEE_THROUGH, 0, 0);
             mc.getBufferBuilders().getEntityVertexConsumers().draw();
         }
 

@@ -43,7 +43,7 @@ public class ShulkerInfoModule extends Module {
             for(ItemStack stack : component.stream().toList()) {
                 int offsetX = x + 1 + i * 18, offsetY = y + Sydney.FONT_MANAGER.getHeight() + 5 + row * 18;
                 context.drawItem(stack, offsetX, offsetY);
-                context.drawStackOverlay(mc.textRenderer, stack, offsetX, offsetY);
+                context.drawItemInSlot(mc.textRenderer, stack, offsetX, offsetY);
                 i++;
                 if(i>=9) {
                     i = 0;

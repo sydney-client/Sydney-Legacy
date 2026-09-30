@@ -10,7 +10,6 @@ import me.aidan.sydney.modules.RegisterModule;
 import me.aidan.sydney.settings.impl.NumberSetting;
 import me.aidan.sydney.utils.minecraft.MovementUtils;
 import me.aidan.sydney.utils.system.MathUtils;
-import net.minecraft.util.PlayerInput;
 import org.joml.Vector2d;
 
 @Getter @Setter
@@ -52,7 +51,12 @@ public class FreecamModule extends Module {
         if (mc.options.jumpKey.isPressed()) freeY += verticalSpeed.getValue().doubleValue();
         if (mc.options.sneakKey.isPressed()) freeY -= verticalSpeed.getValue().doubleValue();
 
-        mc.player.input.playerInput = new PlayerInput(mc.player.input.playerInput.forward(), mc.player.input.playerInput.backward(), mc.player.input.playerInput.left(), mc.player.input.playerInput.right(), false, false, false);
+        mc.player.input.pressingForward = false;
+        mc.player.input.pressingBack = false;
+        mc.player.input.pressingLeft = false;
+        mc.player.input.pressingRight = false;
+        mc.player.input.jumping = false;
+        mc.player.input.sneaking = false;
         mc.player.input.movementForward = 0;
         mc.player.input.movementSideways = 0;
     }

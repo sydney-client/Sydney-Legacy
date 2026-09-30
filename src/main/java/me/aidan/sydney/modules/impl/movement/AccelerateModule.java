@@ -20,7 +20,7 @@ public class AccelerateModule extends Module {
     public void onPlayerMove(PlayerMoveEvent event) {
         if(getNull() || (Sydney.MODULE_MANAGER.getModule(HoleSnapModule.class).isToggled() && Sydney.MODULE_MANAGER.getModule(HoleSnapModule.class).hole != null) || Sydney.MODULE_MANAGER.getModule(SpeedModule.class).isToggled()) return;
 
-        if (mc.player.fallDistance >= 5.0f || mc.player.isSneaking() || mc.player.isClimbing() || mc.world.getBlockState(mc.player.getBlockPos()).getBlock() == Blocks.COBWEB || mc.player.getAbilities().flying || mc.player.isGliding())
+        if (mc.player.fallDistance >= 5.0f || mc.player.isSneaking() || mc.player.isClimbing() || mc.world.getBlockState(mc.player.getBlockPos()).getBlock() == Blocks.COBWEB || mc.player.getAbilities().flying || mc.player.isFallFlying())
             return;
 
         if(!mc.player.isOnGround() && !air.getValue()) return;

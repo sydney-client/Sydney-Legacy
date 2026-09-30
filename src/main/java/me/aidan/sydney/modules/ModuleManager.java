@@ -41,8 +41,14 @@ public class ModuleManager implements IMinecraft {
                 module.getSettings().add(module.drawn);
                 module.getSettings().add(module.bind);
 
-                modules.add(module);
                 moduleClasses.put(module.getClass(), module);
+
+                if (module.getCategory() != Module.Category.COMBAT && module.getCategory() != Module.Category.CORE) {
+                    module.disableForFiltering();
+                    continue;
+                }
+
+                modules.add(module);
             }
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException exception) {
             Sydney.LOGGER.error("Failed to register the client's modules!", exception);

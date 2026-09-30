@@ -3,7 +3,6 @@ package me.aidan.sydney.utils.graphics;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.aidan.sydney.utils.IMinecraft;
-import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
@@ -29,7 +28,7 @@ public class Renderer2D implements IMinecraft {
         buffer.vertex(matrix, right, bottom, 0.0f).color(color.getRGB());
         buffer.vertex(matrix, right, top, 0.0f).color(color.getRGB());
 
-        RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
+        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
         RenderSystem.disableDepthTest();
@@ -49,7 +48,7 @@ public class Renderer2D implements IMinecraft {
         buffer.vertex(matrix, right, bottom, 0.0f).color(endColor.getRGB());
         buffer.vertex(matrix, right, top, 0.0f).color(startColor.getRGB());
 
-        RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
+        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
         RenderSystem.disableDepthTest();
@@ -69,7 +68,7 @@ public class Renderer2D implements IMinecraft {
         buffer.vertex(matrix, right, bottom, 0.0f).color(endColor.getRGB());
         buffer.vertex(matrix, right, top, 0.0f).color(endColor.getRGB());
 
-        RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
+        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
         RenderSystem.disableDepthTest();
@@ -104,7 +103,7 @@ public class Renderer2D implements IMinecraft {
         buffer.vertex(matrix, right, top + 0.5f, 0.0f).color(color.getRGB());
         buffer.vertex(matrix, right, top, 0.0f).color(color.getRGB());
 
-        RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
+        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
         RenderSystem.disableDepthTest();
@@ -122,7 +121,7 @@ public class Renderer2D implements IMinecraft {
         buffer.vertex(matrix, x, y, 0.0f).color(color.getRGB());
         buffer.vertex(matrix, targetX, targetY, 0.0f).color(color.getRGB());
 
-        RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
+        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
         RenderSystem.disableDepthTest();
@@ -145,7 +144,7 @@ public class Renderer2D implements IMinecraft {
         buffer.vertex(matrices.peek().getPositionMatrix(), x + width, y + height, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
         buffer.vertex(matrices.peek().getPositionMatrix(), x, y, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 
-        RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
+        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
         RenderSystem.disableDepthTest();
@@ -165,7 +164,7 @@ public class Renderer2D implements IMinecraft {
         buffer.vertex(matrices.peek().getPositionMatrix(), x + width, y + height, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
         buffer.vertex(matrices.peek().getPositionMatrix(), x, y, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 
-        RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
+        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
         RenderSystem.disableDepthTest();
@@ -185,7 +184,7 @@ public class Renderer2D implements IMinecraft {
             buffer.vertex(matrices.peek().getPositionMatrix(), (float) (x + Math.sin((double) i * 3.141526 / 180.0) * (double) radius), (float) (y + Math.cos((double) i * 3.141526 / 180.0) * (double) radius), 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
         }
 
-        RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
+        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
         RenderSystem.disableDepthTest();
@@ -204,7 +203,7 @@ public class Renderer2D implements IMinecraft {
         buffer.vertex(matrices.peek().getPositionMatrix(), right, bottom, 0).texture(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
         buffer.vertex(matrices.peek().getPositionMatrix(), right, top, 0).texture(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 
-        RenderSystem.setShader(ShaderProgramKeys.POSITION_TEX_COLOR);
+        RenderSystem.setShader(GameRenderer::getPositionTexColorProgram);
         RenderSystem.setShaderTexture(0, identifier);
 
         RenderSystem.enableBlend();

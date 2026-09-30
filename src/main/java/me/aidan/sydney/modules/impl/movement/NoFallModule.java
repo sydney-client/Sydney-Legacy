@@ -18,7 +18,7 @@ public class NoFallModule extends Module {
         if (!isFalling()) return;
 
         if (mode.getValue().equalsIgnoreCase("Grim")) {
-            mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.Full(mc.player.getX(), mc.player.getY() + 0.000000001, mc.player.getZ(), mc.player.getYaw(), mc.player.getPitch(), false, mc.player.horizontalCollision));
+            mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.Full(mc.player.getX(), mc.player.getY() + 0.000000001, mc.player.getZ(), mc.player.getYaw(), mc.player.getPitch(), false));
             mc.player.onLanding();
         }
     }
@@ -39,6 +39,6 @@ public class NoFallModule extends Module {
     }
 
     private boolean isFalling() {
-        return mc.player.fallDistance > mc.player.getSafeFallDistance() && !mc.player.isOnGround() && !mc.player.isGliding();
+        return mc.player.fallDistance > mc.player.getSafeFallDistance() && !mc.player.isOnGround() && !mc.player.isFallFlying();
     }
 }

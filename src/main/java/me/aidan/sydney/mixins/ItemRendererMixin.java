@@ -5,71 +5,68 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import me.aidan.sydney.Sydney;
 import me.aidan.sydney.modules.impl.visuals.EntityModifierModule;
+import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.BakedQuad;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ModelTransformationMode;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.Random;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.List;
 
 @Mixin(ItemRenderer.class)
 public abstract class ItemRendererMixin {
-    @Shadow
-    private static int getTint(int[] tints, int index) {
-        return 0;
-    }
+    @Shadow @Final private ItemColors colors;
 
-    @WrapOperation(method = "renderItem(Lnet/minecraft/item/ModelTransformationMode;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II[ILnet/minecraft/client/render/model/BakedModel;Lnet/minecraft/client/render/RenderLayer;Lnet/minecraft/client/render/item/ItemRenderState$Glint;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/ItemRenderer;renderBakedItemModel(Lnet/minecraft/client/render/model/BakedModel;[IIILnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;)V"))
-    private static void renderItem$renderBakedItemModel(BakedModel model, int[] tints, int light, int overlay, MatrixStack matrices, VertexConsumer vertexConsumer, Operation<Void> original, @Local(argsOnly = true) ModelTransformationMode renderMode) {
+    @WrapOperation(method = "renderItem(Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/render/model/json/ModelTransformationMode;ZLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;IILnet/minecraft/client/render/model/BakedModel;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/ItemRenderer;renderBakedItemModel(Lnet/minecraft/client/render/model/BakedModel;Lnet/minecraft/item/ItemStack;IILnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;)V"))
+    private void renderItem$renderBakedItemModel(ItemRenderer renderer, BakedModel model, ItemStack stack, int light, int overlay, MatrixStack matrices, VertexConsumer vertexConsumer, Operation<Void> original, @Local(argsOnly = true) ModelTransformationMode renderMode) {
         EntityModifierModule module = Sydney.MODULE_MANAGER.getModule(EntityModifierModule.class);
         Color color = module.isToggled() && module.items.getValue() && (renderMode != ModelTransformationMode.GUI || module.itemGlobal.getValue()) ? module.itemColor.getColor() : null;
+        if (color == null) {
+            original.call(renderer, model, stack, light, overlay, matrices, vertexConsumer);
+            return;
+        }
 
         Random random = Random.create();
-        long l = 42L;
-
         for (Direction direction : Direction.values()) {
             random.setSeed(42L);
-            sydney$renderBakedItemQuads(matrices, vertexConsumer, model.getQuads(null, direction, random), tints, color, light, overlay);
+            sydney$renderBakedItemQuads(matrices, vertexConsumer, model.getQuads(null, direction, random), stack, color, light, overlay);
         }
 
         random.setSeed(42L);
-        sydney$renderBakedItemQuads(matrices, vertexConsumer, model.getQuads(null, null, random), tints, color, light, overlay);
+        sydney$renderBakedItemQuads(matrices, vertexConsumer, model.getQuads(null, null, random), stack, color, light, overlay);
     }
 
     @Unique
-    private static void sydney$renderBakedItemQuads(MatrixStack matrices, VertexConsumer vertexConsumer, List<BakedQuad> quads, int[] tints, Color color, int light, int overlay) {
+    private void sydney$renderBakedItemQuads(MatrixStack matrices, VertexConsumer vertexConsumer, List<BakedQuad> quads, ItemStack stack, Color color, int light, int overlay) {
         MatrixStack.Entry entry = matrices.peek();
+        float alpha = color.getAlpha() / 255.0F;
+        float red = color.getRed() / 255.0F;
+        float green = color.getGreen() / 255.0F;
+        float blue = color.getBlue() / 255.0F;
 
         for (BakedQuad bakedQuad : quads) {
-            float f;
-            float g;
-            float h;
-            float j;
-
-            if (bakedQuad.hasTint()) {
-                int i = getTint(tints, bakedQuad.getTintIndex());
-                f = (float) (color == null ? ColorHelper.getAlpha(i) : color.getAlpha()) / 255.0F;
-                g = (float) (color == null ? ColorHelper.getRed(i) : color.getRed()) / 255.0F;
-                h = (float) (color == null ? ColorHelper.getGreen(i) : color.getGreen()) / 255.0F;
-                j = (float) (color == null ? ColorHelper.getBlue(i) : color.getBlue()) / 255.0F;
+            if (bakedQuad.hasColor()) {
+                int tint = colors.getColor(stack, bakedQuad.getColorIndex());
+                vertexConsumer.quad(entry, bakedQuad,
+                        ColorHelper.Argb.getRed(tint) / 255.0F * red,
+                        ColorHelper.Argb.getGreen(tint) / 255.0F * green,
+                        ColorHelper.Argb.getBlue(tint) / 255.0F * blue,
+                        ColorHelper.Argb.getAlpha(tint) / 255.0F * alpha, light, overlay);
             } else {
-                f = 1.0F;
-                g = 1.0F;
-                h = 1.0F;
-                j = 1.0F;
+                vertexConsumer.quad(entry, bakedQuad, red, green, blue, alpha, light, overlay);
             }
-
-            vertexConsumer.quad(entry, bakedQuad, g, h, j, f, light, overlay);
         }
     }
 }

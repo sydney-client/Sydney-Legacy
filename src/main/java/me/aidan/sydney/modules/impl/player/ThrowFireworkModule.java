@@ -28,7 +28,7 @@ public class ThrowFireworkModule extends Module {
             return;
         }
 
-        if (mc.player.getItemCooldownManager().isCoolingDown(new ItemStack(Items.FIREWORK_ROCKET))) {
+        if (mc.player.getItemCooldownManager().isCoolingDown(Items.FIREWORK_ROCKET)) {
             setToggled(false);
             return;
         }

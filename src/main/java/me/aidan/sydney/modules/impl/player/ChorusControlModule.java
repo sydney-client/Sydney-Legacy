@@ -84,7 +84,7 @@ public class ChorusControlModule extends Module {
         if (mc.player == null || mc.world == null) return;
         if (packet == null) return;
 
-        Vec3d vec3d = new Vec3d(packet.change().position().getX(), packet.change().position().getY(), packet.change().position().getZ());
+        Vec3d vec3d = new Vec3d(packet.getX(), packet.getY(), packet.getZ());
         Box box = PlayerEntity.STANDING_DIMENSIONS.getBoxAt(vec3d);
 
         if (mode.getValue().equalsIgnoreCase("Fill") || mode.getValue().equalsIgnoreCase("Both")) Renderer3D.renderBox(event.getMatrices(), box, fillColor.getColor());

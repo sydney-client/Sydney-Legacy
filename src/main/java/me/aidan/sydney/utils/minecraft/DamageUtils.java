@@ -62,7 +62,7 @@ public class DamageUtils implements IMinecraft {
 
         if (entity instanceof LivingEntity livingEntity) {
             damage = mc.world.getDifficulty() == Difficulty.EASY ? Math.min(damage / 2 + 1, damage) : mc.world.getDifficulty() == Difficulty.HARD ? damage * 3 / 2 : damage;
-            damage = DamageUtil.getDamageLeft(livingEntity, damage, mc.world.getDamageSources().explosion(null), (float) livingEntity.getArmor(), (float) livingEntity.getAttributeInstance(EntityAttributes.ARMOR_TOUGHNESS).getValue());
+            damage = DamageUtil.getDamageLeft(livingEntity, damage, mc.world.getDamageSources().explosion(null), (float) livingEntity.getArmor(), (float) livingEntity.getAttributeInstance(EntityAttributes.GENERIC_ARMOR_TOUGHNESS).getValue());
             damage *= livingEntity.hasStatusEffect(StatusEffects.RESISTANCE) ? 1 - ((livingEntity.getStatusEffect(StatusEffects.RESISTANCE).getAmplifier() + 1) * 0.2) : 1;
             damage = DamageUtil.getInflictedDamage(damage, getProtectionAmount(livingEntity.getArmorItems()));
         }

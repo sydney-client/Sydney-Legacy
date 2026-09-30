@@ -11,9 +11,9 @@ public interface WorldRendererAccessor {
     @Accessor("frustum")
     Frustum getFrustum();
 
-    @Accessor("entityOutlineFramebuffer")
+    @Accessor("entityOutlinesFramebuffer")
     Framebuffer getEntityOutlineFramebuffer();
 
-    @Accessor("entityOutlineFramebuffer")
+    @Accessor("entityOutlinesFramebuffer")
     void setEntityOutlineFramebuffer(Framebuffer framebuffer);
 }

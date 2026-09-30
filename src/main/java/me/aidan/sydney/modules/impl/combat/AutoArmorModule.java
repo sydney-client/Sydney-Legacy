@@ -139,7 +139,6 @@ public class AutoArmorModule extends Module {
     }
 
     private EquipmentSlot getSlotType(ItemStack itemStack) {
-        if (itemStack.contains(DataComponentTypes.GLIDER)) return EquipmentSlot.CHEST;
-        return itemStack.get(DataComponentTypes.EQUIPPABLE).slot();
+        return itemStack.getItem() instanceof ArmorItem armorItem ? armorItem.getSlotType() : EquipmentSlot.CHEST;
     }
 }

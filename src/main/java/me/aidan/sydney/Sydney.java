@@ -53,7 +53,6 @@ public class Sydney implements ModInitializer {
 	public static ModuleManager MODULE_MANAGER;
 	public static CommandManager COMMAND_MANAGER;
 
-	public static ShaderManager SHADER_MANAGER;
 	public static ConfigManager CONFIG_MANAGER;
 
 	public static ClickGuiScreen CLICK_GUI;
@@ -78,7 +77,6 @@ public class Sydney implements ModInitializer {
 	}
 
 	public static void onPostInitialize() {
-		SHADER_MANAGER = new ShaderManager();
 		CONFIG_MANAGER = new ConfigManager();
 
 		CLICK_GUI = new ClickGuiScreen();

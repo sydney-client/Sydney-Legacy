@@ -14,7 +14,7 @@ public class ReverseStepModule extends Module {
     @SubscribeEvent
     public void onPlayerUpdate(PlayerUpdateEvent event) {
         if (!Sydney.SERVER_MANAGER.getSetbackTimer().hasTimeElapsed(300L)) return;
-        if (mc.player.isRiding() || mc.player.isGliding() || mc.player.isHoldingOntoLadder() || mc.player.isInLava() || mc.player.isTouchingWater() || mc.player.input.playerInput.jump() || mc.player.input.playerInput.sneak()) {
+        if (mc.player.isRiding() || mc.player.isFallFlying() || mc.player.isHoldingOntoLadder() || mc.player.isInLava() || mc.player.isTouchingWater() || mc.player.input.jumping || mc.player.input.sneaking) {
             return;
         }
 

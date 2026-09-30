@@ -89,7 +89,7 @@ public abstract class LivingEntityMixin extends Entity implements ILivingEntity,
     @Inject(method = "setSprinting", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setSprinting(Z)V", shift = At.Shift.AFTER), cancellable = true)
     private void setSprinting$setSprinting(boolean sprinting, CallbackInfo info) {
         if ((Object) this == mc.player && Sydney.MODULE_MANAGER.getModule(SprintModule.class).isToggled()) {
-            EntityAttributeInstance entityAttributeInstance = getAttributeInstance(EntityAttributes.MOVEMENT_SPEED);
+            EntityAttributeInstance entityAttributeInstance = getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED);
             entityAttributeInstance.removeModifier(SPRINTING_SPEED_BOOST.id());
 
             if (Sydney.MODULE_MANAGER.getModule(SprintModule.class).shouldSprint()) {
@@ -103,8 +103,8 @@ public abstract class LivingEntityMixin extends Entity implements ILivingEntity,
         }
     }
 
-    @ModifyExpressionValue(method = "travelMidAir", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getStatusEffect(Lnet/minecraft/registry/entry/RegistryEntry;)Lnet/minecraft/entity/effect/StatusEffectInstance;"))
-    private @Nullable StatusEffectInstance travelMidAir$getStatusEffect(@Nullable StatusEffectInstance original) {
+    @ModifyExpressionValue(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getStatusEffect(Lnet/minecraft/registry/entry/RegistryEntry;)Lnet/minecraft/entity/effect/StatusEffectInstance;"))
+    private @Nullable StatusEffectInstance travel$getStatusEffect(@Nullable StatusEffectInstance original) {
         if (Sydney.MODULE_MANAGER.getModule(AntiLevitationModule.class).isToggled()) return null;
         return original;
     }

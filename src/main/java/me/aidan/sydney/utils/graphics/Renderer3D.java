@@ -5,7 +5,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.aidan.sydney.Sydney;
 import me.aidan.sydney.mixins.accessors.WorldRendererAccessor;
 import me.aidan.sydney.utils.IMinecraft;
-import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Box;
@@ -163,7 +162,7 @@ public class Renderer3D implements IMinecraft {
             BufferBuilder buffer = RenderSystem.renderThreadTesselator().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
             for (VertexCollection collection : quads) collection.vertex(buffer);
 
-            RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
+            RenderSystem.setShader(GameRenderer::getPositionColorProgram);
             RenderSystem.disableCull();
 
             BufferRenderer.drawWithGlobalProgram(buffer.end());
@@ -175,7 +174,7 @@ public class Renderer3D implements IMinecraft {
             BufferBuilder buffer = RenderSystem.renderThreadTesselator().begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
             for (VertexCollection collection : debugLines) collection.vertex(buffer);
 
-            RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
+            RenderSystem.setShader(GameRenderer::getPositionColorProgram);
             GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
             GL11.glEnable(GL11.GL_LINE_SMOOTH);
 

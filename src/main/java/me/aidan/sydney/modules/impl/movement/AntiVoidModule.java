@@ -18,7 +18,7 @@ public class AntiVoidModule extends Module {
             event.setCancelled(true);
             event.setMovement(new Vec3d(event.getMovement().x, 0, event.getMovement().z));
 
-            mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY(), mc.player.getZ(), true, mc.player.horizontalCollision));
+            mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY(), mc.player.getZ(), true));
         }
     }
 

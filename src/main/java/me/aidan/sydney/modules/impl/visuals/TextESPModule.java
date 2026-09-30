@@ -42,7 +42,7 @@ public class TextESPModule extends Module {
                 SoundEvent sound = packet.getSound().value();
 
                 if (sound == SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT || sound == SoundEvents.ENTITY_ENDERMAN_TELEPORT) {
-                    chorusList.add(new Chorus(mc.getSoundManager().get(sound.id()).getSubtitle().getString(), new Vec3d(packet.getX(), packet.getY(), packet.getZ())));
+                    chorusList.add(new Chorus(mc.getSoundManager().get(sound.getId()).getSubtitle().getString(), new Vec3d(packet.getX(), packet.getY(), packet.getZ())));
                 }
             }
         }

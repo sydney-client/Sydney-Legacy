@@ -64,7 +64,7 @@ public class TrajectoriesModule extends Module {
 
         hitEntities.clear();
 
-        if ((mc.player.getOffHandStack().getItem() instanceof CrossbowItem && EnchantmentHelper.getLevel(mc.world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT).getOrThrow(Enchantments.MULTISHOT), mc.player.getOffHandStack()) != 0) || (mc.player.getMainHandStack().getItem() instanceof CrossbowItem && EnchantmentHelper.getLevel(mc.world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT).getOrThrow(Enchantments.MULTISHOT), mc.player.getMainHandStack()) != 0)) {
+        if ((mc.player.getOffHandStack().getItem() instanceof CrossbowItem && EnchantmentHelper.getLevel(mc.world.getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(Enchantments.MULTISHOT).orElseThrow(), mc.player.getOffHandStack()) != 0) || (mc.player.getMainHandStack().getItem() instanceof CrossbowItem && EnchantmentHelper.getLevel(mc.world.getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(Enchantments.MULTISHOT).orElseThrow(), mc.player.getMainHandStack()) != 0)) {
             project(event.getMatrices(), activeHand == Hand.OFF_HAND ? mc.player.getOffHandStack().getItem() : mc.player.getMainHandStack().getItem(), mc.player.getYaw() - 10, event.getTickDelta());
             project(event.getMatrices(), activeHand == Hand.OFF_HAND ? mc.player.getOffHandStack().getItem() : mc.player.getMainHandStack().getItem(), mc.player.getYaw(), event.getTickDelta());
             project(event.getMatrices(), activeHand == Hand.OFF_HAND ? mc.player.getOffHandStack().getItem() : mc.player.getMainHandStack().getItem(), mc.player.getYaw() + 10, event.getTickDelta());

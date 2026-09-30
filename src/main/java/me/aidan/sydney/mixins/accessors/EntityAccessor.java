@@ -11,4 +11,7 @@ public interface EntityAccessor {
     static Vec3d invokeMovementInputToVelocity(Vec3d movementInput, float speed, float yaw) {
         throw new AssertionError();
     }
+
+    @Invoker("setFlag")
+    void invokeSetFlag(int index, boolean value);
 }

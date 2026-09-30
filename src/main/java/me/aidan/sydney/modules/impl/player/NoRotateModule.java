@@ -23,15 +23,15 @@ public class NoRotateModule extends Module {
 
         if (event.getPacket() instanceof PlayerPositionLookS2CPacket packet) {
             if (spoof.getValue()) {
-                Sydney.ROTATION_MANAGER.packetRotate(packet.change().yaw(), packet.change().pitch());
+                Sydney.ROTATION_MANAGER.packetRotate(packet.getYaw(), packet.getPitch());
                 Sydney.ROTATION_MANAGER.packetRotate(mc.player.getYaw(), mc.player.getPitch());
             }
 
-            ((PlayerPositionAccessor) (Object) packet.change()).setYaw(mc.player.getYaw());
-            ((PlayerPositionAccessor) (Object) packet.change()).setPitch(mc.player.getPitch());
+            ((PlayerPositionAccessor) (Object) packet).setYaw(mc.player.getYaw());
+            ((PlayerPositionAccessor) (Object) packet).setPitch(mc.player.getPitch());
 
-            packet.relatives().remove(PositionFlag.X_ROT);
-            packet.relatives().remove(PositionFlag.Y_ROT);
+            packet.getFlags().remove(PositionFlag.X_ROT);
+            packet.getFlags().remove(PositionFlag.Y_ROT);
         }
     }
 }

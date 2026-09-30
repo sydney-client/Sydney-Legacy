@@ -3,6 +3,7 @@ package me.aidan.sydney.modules.impl.combat;
 import me.aidan.sydney.Sydney;
 import me.aidan.sydney.events.SubscribeEvent;
 import me.aidan.sydney.events.impl.PacketReceiveEvent;
+import me.aidan.sydney.mixins.accessors.EntityAccessor;
 import me.aidan.sydney.events.impl.PlayerMoveEvent;
 import me.aidan.sydney.events.impl.PlayerUpdateEvent;
 import me.aidan.sydney.events.impl.UpdateMovementEvent;
@@ -47,13 +48,13 @@ public class MaceAuraModule extends Module {
     public void onEnable() {
         if(getNull()) return;
 
-        if(mc.player.isGliding()) mc.player.stopGliding();
+        if (mc.player.isFallFlying()) ((EntityAccessor) (Object) mc.player).invokeSetFlag(7, false);
     }
 
     @SubscribeEvent
     public void onPacketReceive(PacketReceiveEvent event) {
         if(event.getPacket() instanceof PlayerPositionLookS2CPacket && reset) {
-            mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(mc.player.isOnGround(), mc.player.horizontalCollision));
+            mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(mc.player.isOnGround()));
             reset = false;
         }
     }
@@ -121,9 +122,9 @@ public class MaceAuraModule extends Module {
     }
 
     private void doRubberband(Vec3d previous) {
-        mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(false, mc.player.horizontalCollision));
-        mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY() + 1, mc.player.getZ(), false, mc.player.horizontalCollision));
-        mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(previous.x, previous.y, previous.z, false, mc.player.horizontalCollision));
+        mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(false));
+        mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY() + 1, mc.player.getZ(), false));
+        mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(previous.x, previous.y, previous.z, false));
         reset = true;
     }
 

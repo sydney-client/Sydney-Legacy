@@ -31,7 +31,7 @@ public class ThrowPearlModule extends Module {
             return;
         }
 
-        if (mc.player.getItemCooldownManager().isCoolingDown(new ItemStack(Items.ENDER_PEARL))) {
+        if (mc.player.getItemCooldownManager().isCoolingDown(Items.ENDER_PEARL)) {
             setToggled(false);
             return;
         }

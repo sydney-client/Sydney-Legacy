@@ -33,7 +33,7 @@ public class ClickGuiScreen extends Screen {
         super(Text.literal(Sydney.MOD_ID + "-click-gui"));
 
         int x = 6;
-        for(Module.Category category : Module.Category.values()) {
+        for(Module.Category category : new Module.Category[]{Module.Category.COMBAT, Module.Category.CORE}) {
             frames.add(new Frame(category, x, 3, 100, 13));
             x += 104;
         }
@@ -110,7 +110,7 @@ public class ClickGuiScreen extends Screen {
 
     @Override
     public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
-        if(Sydney.MODULE_MANAGER.getModule(ClickGuiModule.class).blur.getValue()) applyBlur();
+        if(Sydney.MODULE_MANAGER.getModule(ClickGuiModule.class).blur.getValue()) applyBlur(delta);
         Renderer2D.renderQuad(context.getMatrices(), 0, 0, this.width, this.height, new Color(0, 0, 0, 100));
     }
 

@@ -47,7 +47,7 @@ public class NoSlowModule extends Module {
     public void onUpdateMovement(UpdateMovementEvent event) {
         if (mc.player == null || mc.world == null) return;
         if (!grimStrict.getValue()) return;
-        if (!mc.player.isUsingItem() || mc.player.isRiding() || mc.player.isGliding()) return;
+        if (!mc.player.isUsingItem() || mc.player.isRiding() || mc.player.isFallFlying()) return;
 
         if (mc.player.getActiveHand() == Hand.OFF_HAND) {
             mc.getNetworkHandler().sendPacket(new UpdateSelectedSlotC2SPacket(mc.player.getInventory().selectedSlot % 8 + 1));

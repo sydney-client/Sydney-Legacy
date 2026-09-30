@@ -77,14 +77,14 @@ public class ElytraFlyModule extends Module {
         if (!mode.getValue().equalsIgnoreCase("Packet")) return;
 
         if ((!mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox().expand(-0.25, 0.0, -0.25).offset(0.0, -0.3, 0.0)).iterator().hasNext() || !stopOnGround.getValue()) && mc.player.getInventory().getStack(38).getItem() == Items.ELYTRA) {
-            if (infiniteDurability.getValue() || !mc.player.isGliding()) mc.getNetworkHandler().sendPacket(new ClientCommandC2SPacket(mc.player, ClientCommandC2SPacket.Mode.START_FALL_FLYING));
+            if (infiniteDurability.getValue() || !mc.player.isFallFlying()) mc.getNetworkHandler().sendPacket(new ClientCommandC2SPacket(mc.player, ClientCommandC2SPacket.Mode.START_FALL_FLYING));
             if (mc.player.age % 3 != 0 && ncpStrict.getValue().equalsIgnoreCase("Motion")) event.setCancelled(true);
         }
     }
 
     @SubscribeEvent
     public void onPlayerTravel(PlayerTravelEvent event) {
-        if (mc.player == null || mc.world == null || !mc.player.isGliding()) return;
+        if (mc.player == null || mc.world == null || !mc.player.isFallFlying()) return;
 
         if (mode.getValue().equalsIgnoreCase("Control")) {
             event.setCancelled(true);
@@ -132,7 +132,7 @@ public class ElytraFlyModule extends Module {
         }
 
         if (mode.getValue().equalsIgnoreCase("Control")) {
-            if (event.getPacket() instanceof PlayerMoveC2SPacket packet && packet.changesLook() && mc.player.isGliding()) {
+            if (event.getPacket() instanceof PlayerMoveC2SPacket packet && packet.changesLook() && mc.player.isFallFlying()) {
                 if (mode.getValue().equalsIgnoreCase("Control")) {
                     if (mc.options.leftKey.isPressed()) ((PlayerMoveC2SPacketAccessor) packet).setYaw(packet.getYaw(0.0f) - 90.0f);
                     if (mc.options.rightKey.isPressed()) ((PlayerMoveC2SPacketAccessor) packet).setYaw(packet.getYaw(0.0f) + 90.0f);

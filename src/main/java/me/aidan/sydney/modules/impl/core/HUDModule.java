@@ -253,7 +253,7 @@ public class HUDModule extends Module {
 
         int offset = 0;
         for (PlayerEntry entry : playerEntries) {
-            if (entry.headTexture() != null) PlayerSkinDrawer.draw(event.getContext(), entry.headTexture(), 2, 1 + (Sydney.FONT_MANAGER.getHeight() * 2) + ((Sydney.FONT_MANAGER.getHeight() + 1) * offset), Sydney.FONT_MANAGER.getHeight(), true, false, Color.WHITE.getRGB());
+            if (entry.headTexture() != null) PlayerSkinDrawer.draw(event.getContext(), entry.headTexture(), 2, 1 + (Sydney.FONT_MANAGER.getHeight() * 2) + ((Sydney.FONT_MANAGER.getHeight() + 1) * offset), Sydney.FONT_MANAGER.getHeight());
             drawText(event.getContext(), entry.text(), 2 + (entry.headTexture() != null ? Sydney.FONT_MANAGER.getHeight() + 2 : 0), 2 + (Sydney.FONT_MANAGER.getHeight() * 2) + ((Sydney.FONT_MANAGER.getHeight() + 1) * offset), Sydney.FRIEND_MANAGER.contains(entry.player().getName().getString()) ? Sydney.FRIEND_MANAGER.getDefaultFriendColor() : null);
 
             offset++;
@@ -277,7 +277,7 @@ public class HUDModule extends Module {
                 int y = mc.getWindow().getScaledHeight() - 55 - wateroffset;
 
                 event.getContext().drawItem(stack, x, y);
-                event.getContext().drawStackOverlay(mc.textRenderer, stack, x, y);
+                event.getContext().drawItemInSlot(mc.textRenderer, stack, x, y);
 
                 int damage = stack.getDamage();
                 int maxDamage = stack.getMaxDamage();
@@ -301,7 +301,7 @@ public class HUDModule extends Module {
                 int y = mc.getWindow().getScaledHeight() - 55 - ((mc.player.isSubmergedInWater() && mc.interactionManager.getCurrentGameMode() != GameMode.CREATIVE) ? 10 : 0);
 
                 event.getContext().drawItem(stack, x, y);
-                event.getContext().drawStackOverlay(mc.textRenderer, stack, x, y, String.valueOf(totems));
+                event.getContext().drawItemInSlot(mc.textRenderer, stack, x, y, String.valueOf(totems));
             }
         }
 
@@ -316,7 +316,7 @@ public class HUDModule extends Module {
                 matrices.push();
                 matrices.translate(x, y, 0);
                 event.getContext().drawItem(stack, 0, 0);
-                event.getContext().drawStackOverlay(mc.textRenderer, stack, 0, 0, String.valueOf(experienceBottles));
+                event.getContext().drawItemInSlot(mc.textRenderer, stack, 0, 0, String.valueOf(experienceBottles));
                 matrices.pop();
 
                 renderedXpCounter = true;
@@ -333,7 +333,7 @@ public class HUDModule extends Module {
                 matrices.push();
                 matrices.translate(x, y, 0);
                 event.getContext().drawItem(stack, 0, 0);
-                event.getContext().drawStackOverlay(mc.textRenderer, stack, 0, 0, String.valueOf(crystals));
+                event.getContext().drawItemInSlot(mc.textRenderer, stack, 0, 0, String.valueOf(crystals));
                 matrices.pop();
             }
         }
@@ -359,7 +359,7 @@ public class HUDModule extends Module {
                 if (entry.sprite() != null) {
                     matrices.push();
                     matrices.translate(mc.getWindow().getScaledWidth() - 2 - Sydney.FONT_MANAGER.getWidth(entry.text()) - Sydney.FONT_MANAGER.getHeight() - 2, mc.getWindow().getScaledHeight() - chatOffset - 2 - Sydney.FONT_MANAGER.getHeight() - (Sydney.FONT_MANAGER.getHeight() * offset) - 1, 0);
-                    event.getContext().drawSpriteStretched(RenderLayer::getGuiTextured, entry.sprite(), 0, 0, Sydney.FONT_MANAGER.getHeight(), Sydney.FONT_MANAGER.getHeight());
+                    event.getContext().drawSprite(0, 0, 0, Sydney.FONT_MANAGER.getHeight(), Sydney.FONT_MANAGER.getHeight(), entry.sprite());
                     matrices.pop();
                 }
 

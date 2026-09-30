@@ -3,18 +3,12 @@ package me.aidan.sydney.utils.graphics;
 import me.aidan.sydney.Sydney;
 import me.aidan.sydney.modules.impl.visuals.NoInterpolationModule;
 import me.aidan.sydney.utils.IMinecraft;
-import me.aidan.sydney.utils.mixins.ILivingEntityRenderer;
 import me.aidan.sydney.utils.mixins.IMultiPhase;
 import me.aidan.sydney.utils.mixins.IMultiPhaseParameters;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EndCrystalEntityRenderer;
 import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.render.entity.state.EndCrystalEntityRenderState;
-import net.minecraft.client.render.entity.state.EntityRenderState;
-import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
@@ -41,8 +35,7 @@ public class ModelRenderer implements IMinecraft {
         if (!Sydney.MODULE_MANAGER.getModule(NoInterpolationModule.class).isToggled()) ModelRenderer.offset = new Vec3d(MathHelper.lerp(tickDelta, entity.lastRenderX, entity.getX()), MathHelper.lerp(tickDelta, entity.lastRenderY, entity.getY()), MathHelper.lerp(tickDelta, entity.lastRenderZ, entity.getZ()));
         else ModelRenderer.offset = new Vec3d(entity.getX(), entity.getY(), entity.getZ());
 
-        EntityRenderer<?, ?> renderer = mc.getEntityRenderDispatcher().getRenderer(entity);
-        EntityRenderState renderState = ((EntityRenderer<Entity, ?>) renderer).getAndUpdateRenderState(entity, tickDelta);
+        EntityRenderer<Entity> renderer = (EntityRenderer<Entity>) mc.getEntityRenderDispatcher().getRenderer(entity);
 
         MatrixStack matrices = new MatrixStack();
         ModelRenderer.matrix4f = matrices.peek().getPositionMatrix();
@@ -50,13 +43,7 @@ public class ModelRenderer implements IMinecraft {
         matrices.push();
         matrices.scale(scale, scale, scale);
 
-        if (renderer instanceof LivingEntityRenderer<?, ?, ?> && renderState instanceof LivingEntityRenderState state) {
-            ((ILivingEntityRenderer) renderer).sydney$render(state, matrices, CustomVertexConsumerProvider.INSTANCE, 15);
-        }
-
-        if (renderer instanceof EndCrystalEntityRenderer crystalRenderer && renderState instanceof EndCrystalEntityRenderState state) {
-            crystalRenderer.render(state, matrices, CustomVertexConsumerProvider.INSTANCE, 15);
-        }
+        renderer.render(entity, entity.getYaw(), tickDelta, matrices, CustomVertexConsumerProvider.INSTANCE, 15);
 
         matrices.push();
     }

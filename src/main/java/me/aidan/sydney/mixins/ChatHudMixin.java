@@ -20,7 +20,6 @@ import net.minecraft.network.message.MessageSignatureData;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.profiler.Profilers;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -79,7 +78,7 @@ public abstract class ChatHudMixin<E> implements IMinecraft {
             int i = this.getVisibleLineCount();
             int j = this.visibleMessages.size();
             if (j > 0) {
-                Profilers.get().push("chat");
+                this.client.getProfiler().push("chat");
                 float f = (float)this.getChatScale();
                 int k = MathHelper.ceil((float)this.getWidth() / f);
                 int l = context.getScaledWindowHeight();
@@ -172,7 +171,7 @@ public abstract class ChatHudMixin<E> implements IMinecraft {
                 }
 
                 context.getMatrices().pop();
-                Profilers.get().pop();
+                this.client.getProfiler().pop();
             }
         }
     }

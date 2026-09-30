@@ -4,8 +4,6 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.aidan.sydney.Sydney;
-import me.aidan.sydney.events.impl.RenderEntityEvent;
-import me.aidan.sydney.events.impl.RenderShaderEvent;
 import me.aidan.sydney.events.impl.RenderWorldEvent;
 import me.aidan.sydney.modules.impl.miscellaneous.FOVModifierModule;
 import me.aidan.sydney.modules.impl.player.NoEntityTraceModule;
@@ -20,7 +18,6 @@ import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.profiler.Profilers;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
@@ -48,7 +45,7 @@ public abstract class GameRendererMixin {
         Renderer3D.prepare();
     }
 
-    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/WorldRenderer;render(Lnet/minecraft/client/util/ObjectAllocator;Lnet/minecraft/client/render/RenderTickCounter;ZLnet/minecraft/client/render/Camera;Lnet/minecraft/client/render/GameRenderer;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;)V", shift = At.Shift.AFTER))
+    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/WorldRenderer;render(Lnet/minecraft/client/render/RenderTickCounter;ZLnet/minecraft/client/render/Camera;Lnet/minecraft/client/render/GameRenderer;Lnet/minecraft/client/render/LightmapTextureManager;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;)V", shift = At.Shift.AFTER))
     private void renderWorld$swap(RenderTickCounter tickCounter, CallbackInfo info, @Local(ordinal = 2) Matrix4f matrix4f3, @Local(ordinal = 1) float tickDelta, @Local MatrixStack matrixStack) {
         RenderSystem.getModelViewStack().pushMatrix();
 
@@ -61,14 +58,7 @@ public abstract class GameRendererMixin {
         Renderer3D.draw(Renderer3D.SHINE_QUADS, Renderer3D.SHINE_DEBUG_LINES, true);
 
         Sydney.EVENT_HANDLER.post(new RenderWorldEvent.Post(matrixStack, tickDelta));
-        Sydney.EVENT_HANDLER.post(new RenderEntityEvent.Post());
-
         RenderSystem.getModelViewStack().popMatrix();
-    }
-
-    @Inject(method = "renderWorld", at = @At("TAIL"))
-    private void renderWorld$TAIL(RenderTickCounter renderTickCounter, CallbackInfo info) {
-        Sydney.EVENT_HANDLER.post(new RenderShaderEvent.Post());
     }
 
     @Inject(method = "tiltViewWhenHurt", at = @At("HEAD"), cancellable = true)
@@ -81,7 +71,7 @@ public abstract class GameRendererMixin {
     @Inject(method = "updateCrosshairTarget", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;findCrosshairTarget(Lnet/minecraft/entity/Entity;DDF)Lnet/minecraft/util/hit/HitResult;"), cancellable = true)
     private void updateCrosshairTarget(float tickDelta, CallbackInfo info) {
         if (Sydney.MODULE_MANAGER.getModule(FreecamModule.class).isToggled()) {
-            Profilers.get().pop();
+            client.getProfiler().pop();
             client.crosshairTarget = WorldUtils.getRaytraceTarget(Sydney.MODULE_MANAGER.getModule(FreecamModule.class).getFreeYaw(), Sydney.MODULE_MANAGER.getModule(FreecamModule.class).getFreePitch(), Sydney.MODULE_MANAGER.getModule(FreecamModule.class).getFreeX(), Sydney.MODULE_MANAGER.getModule(FreecamModule.class).getFreeY(), Sydney.MODULE_MANAGER.getModule(FreecamModule.class).getFreeZ());
             info.cancel();
         }
@@ -103,7 +93,7 @@ public abstract class GameRendererMixin {
         }
     }
 
-    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/WorldRenderer;render(Lnet/minecraft/client/util/ObjectAllocator;Lnet/minecraft/client/render/RenderTickCounter;ZLnet/minecraft/client/render/Camera;Lnet/minecraft/client/render/GameRenderer;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;)V", shift = At.Shift.AFTER))
+    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/WorldRenderer;render(Lnet/minecraft/client/render/RenderTickCounter;ZLnet/minecraft/client/render/Camera;Lnet/minecraft/client/render/GameRenderer;Lnet/minecraft/client/render/LightmapTextureManager;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;)V", shift = At.Shift.AFTER))
     private void renderWorld(RenderTickCounter tickCounter, CallbackInfo info, @Local(ordinal = 0) Matrix4f matrix4f) {
         MatrixStack matrix = new MatrixStack();
         matrix.peek().getPositionMatrix().mul(matrix4f);

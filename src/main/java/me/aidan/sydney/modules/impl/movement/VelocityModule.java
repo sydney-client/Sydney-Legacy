@@ -5,7 +5,7 @@ import me.aidan.sydney.events.SubscribeEvent;
 import me.aidan.sydney.events.impl.PacketReceiveEvent;
 import me.aidan.sydney.events.impl.TickEvent;
 import me.aidan.sydney.mixins.accessors.EntityVelocityUpdateS2CPacketAccessor;
-import me.aidan.sydney.mixins.accessors.Vec3dAccessor;
+import me.aidan.sydney.mixins.accessors.ExplosionS2CPacketAccessor;
 import me.aidan.sydney.modules.Module;
 import me.aidan.sydney.modules.RegisterModule;
 import me.aidan.sydney.settings.impl.BooleanSetting;
@@ -42,7 +42,7 @@ public class VelocityModule extends Module {
         if (!cancel) return;
 
         if (mode.getValue().equalsIgnoreCase("Grim") && (!pause.getValue() || Sydney.SERVER_MANAGER.getSetbackTimer().hasTimeElapsed(100L))) {
-            mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.Full(mc.player.getX(), mc.player.getY(), mc.player.getZ(), Sydney.ROTATION_MANAGER.getServerYaw(), Sydney.ROTATION_MANAGER.getServerPitch(), mc.player.isOnGround(), mc.player.horizontalCollision));
+            mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.Full(mc.player.getX(), mc.player.getY(), mc.player.getZ(), Sydney.ROTATION_MANAGER.getServerYaw(), Sydney.ROTATION_MANAGER.getServerPitch(), mc.player.isOnGround()));
             mc.getNetworkHandler().sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.STOP_DESTROY_BLOCK, mc.player.isCrawling() ? mc.player.getBlockPos() : mc.player.getBlockPos().up(), Direction.DOWN));
         }
 
@@ -79,9 +79,9 @@ public class VelocityModule extends Module {
         if (event.getPacket() instanceof ExplosionS2CPacket packet && explosions.getValue()) {
             switch (mode.getValue()) {
                 case "Normal" -> {
-                    if (packet.playerKnockback().isPresent()) ((Vec3dAccessor) packet.playerKnockback().get()).setX((float) (packet.playerKnockback().get().getX() * (horizontal.getValue().doubleValue() / 100.0)));
-                    if (packet.playerKnockback().isPresent()) ((Vec3dAccessor) packet.playerKnockback().get()).setY((float) (packet.playerKnockback().get().getY() * (vertical.getValue().doubleValue() / 100.0)));
-                    if (packet.playerKnockback().isPresent()) ((Vec3dAccessor) packet.playerKnockback().get()).setZ((float) (packet.playerKnockback().get().getZ() * (horizontal.getValue().doubleValue() / 100.0)));
+                    ((ExplosionS2CPacketAccessor) packet).setPlayerVelocityX((float) (packet.getPlayerVelocityX() * horizontal.getValue().doubleValue() / 100.0));
+                    ((ExplosionS2CPacketAccessor) packet).setPlayerVelocityY((float) (packet.getPlayerVelocityY() * vertical.getValue().doubleValue() / 100.0));
+                    ((ExplosionS2CPacketAccessor) packet).setPlayerVelocityZ((float) (packet.getPlayerVelocityZ() * horizontal.getValue().doubleValue() / 100.0));
                 }
                 case "Cancel" -> {
                     if (pause.getValue() && !Sydney.SERVER_MANAGER.getSetbackTimer().hasTimeElapsed(100L)) return;
@@ -98,9 +98,9 @@ public class VelocityModule extends Module {
 
             if (event.isCancelled()) {
                 mc.executeSync(() -> {
-                    Vec3d vec3d = packet.center();
-                    mc.world.playSound(vec3d.getX(), vec3d.getY(), vec3d.getZ(), packet.explosionSound().value(), SoundCategory.BLOCKS, 4.0F, (1.0F + (mc.world.random.nextFloat() - mc.world.random.nextFloat()) * 0.2F) * 0.7F, false);
-                    mc.world.addParticle(packet.explosionParticle(), vec3d.getX(), vec3d.getY(), vec3d.getZ(), 1.0, 0.0, 0.0);
+                    Vec3d vec3d = new Vec3d(packet.getX(), packet.getY(), packet.getZ());
+                    mc.world.playSound(vec3d.getX(), vec3d.getY(), vec3d.getZ(), packet.getSoundEvent().value(), SoundCategory.BLOCKS, 4.0F, (1.0F + (mc.world.random.nextFloat() - mc.world.random.nextFloat()) * 0.2F) * 0.7F, false);
+                    mc.world.addParticle(packet.getParticle(), vec3d.getX(), vec3d.getY(), vec3d.getZ(), 1.0, 0.0, 0.0);
                 });
             }
         }

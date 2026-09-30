@@ -3,7 +3,6 @@ package me.aidan.sydney.mixins;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import me.aidan.sydney.Sydney;
-import me.aidan.sydney.events.impl.RenderHandEvent;
 import me.aidan.sydney.modules.impl.player.SwingModule;
 import me.aidan.sydney.modules.impl.visuals.HandProgressModule;
 import me.aidan.sydney.modules.impl.visuals.ViewModelModule;
@@ -18,8 +17,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.ModelTransformationMode;
-import net.minecraft.item.consume.UseAction;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
+import net.minecraft.util.UseAction;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
@@ -255,19 +254,6 @@ public abstract class HeldItemRendererMixin {
         }
 
         return MathHelper.lerp(delta, start, end);
-    }
-
-    @WrapOperation(method = "renderItem(FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider$Immediate;Lnet/minecraft/client/network/ClientPlayerEntity;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/HeldItemRenderer;renderFirstPersonItem(Lnet/minecraft/client/network/AbstractClientPlayerEntity;FFLnet/minecraft/util/Hand;FLnet/minecraft/item/ItemStack;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V"))
-    private void renderItem$renderFirstPersonItem(HeldItemRenderer instance, AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, Operation<Void> original) {
-        RenderHandEvent event = new RenderHandEvent(vertexConsumers);
-        Sydney.EVENT_HANDLER.post(event);
-
-        original.call(instance, player, tickDelta, pitch, hand, swingProgress, item, equipProgress, matrices, event.getVertexConsumers(), light);
-    }
-
-    @Inject(method = "renderItem(FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider$Immediate;Lnet/minecraft/client/network/ClientPlayerEntity;I)V", at = @At("TAIL"))
-    private void renderItem$TAIL(float tickDelta, MatrixStack matrices, VertexConsumerProvider.Immediate vertexConsumers, ClientPlayerEntity player, int light, CallbackInfo info) {
-        Sydney.EVENT_HANDLER.post(new RenderHandEvent.Post());
     }
 
     @Inject(method = "applySwingOffset", at = @At("HEAD"), cancellable = true)

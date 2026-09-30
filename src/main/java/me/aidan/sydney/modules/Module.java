@@ -94,6 +94,11 @@ public abstract class Module implements IMinecraft {
         }
     }
 
+    void disableForFiltering() {
+        toggled = false;
+        Sydney.EVENT_HANDLER.unsubscribe(this);
+    }
+
     public int getBind() {
         return bind.getValue();
     }

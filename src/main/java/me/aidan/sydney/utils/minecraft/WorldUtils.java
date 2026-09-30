@@ -296,7 +296,7 @@ public class WorldUtils implements IMinecraft {
 
         if (speed > 1.0f) {
             ItemStack stack = mc.player.getInventory().getStack(slot);
-            int efficiency = EnchantmentHelper.getLevel(mc.world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT).getOrThrow(Enchantments.EFFICIENCY), stack);
+            int efficiency = EnchantmentHelper.getLevel(mc.world.getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(Enchantments.EFFICIENCY).orElseThrow(), stack);
             if (efficiency > 0 && !stack.isEmpty()) speed += efficiency * efficiency + 1;
         }
 
@@ -310,7 +310,7 @@ public class WorldUtils implements IMinecraft {
             });
         }
 
-        if (mc.player.isSubmergedIn(FluidTags.WATER) && !(EnchantmentHelper.getEquipmentLevel(mc.world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT).getOrThrow(Enchantments.AQUA_AFFINITY), mc.player) > 0)) speed /= 5.0f;
+        if (mc.player.isSubmergedIn(FluidTags.WATER) && !(EnchantmentHelper.getEquipmentLevel(mc.world.getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(Enchantments.AQUA_AFFINITY).orElseThrow(), mc.player) > 0)) speed /= 5.0f;
         if (!mc.player.isOnGround()) speed /= 5.0f;
 
         return speed / blockState.getBlock().getHardness() / (!blockState.isToolRequired() || mc.player.getInventory().main.get(slot).isSuitableFor(blockState) ? 30 : 100);
@@ -322,13 +322,13 @@ public class WorldUtils implements IMinecraft {
 
         if (speed > 1) {
             ItemStack stack = mc.player.getInventory().getStack(slot);
-            int efficiency = EnchantmentHelper.getLevel(mc.world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT).getOrThrow(Enchantments.EFFICIENCY), stack);
+            int efficiency = EnchantmentHelper.getLevel(mc.world.getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(Enchantments.EFFICIENCY).orElseThrow(), stack);
             if (efficiency > 0 && !stack.isEmpty()) speed += (float) (StrictMath.pow(efficiency, 2) + 1);
         }
 
         if (mc.player.hasStatusEffect(StatusEffects.HASTE)) speed *= 1 + (mc.player.getStatusEffect(StatusEffects.HASTE).getAmplifier() + 1) * 0.2F;
         if (mc.player.hasStatusEffect(StatusEffects.MINING_FATIGUE)) speed *= (float) Math.pow(0.3f, mc.player.getStatusEffect(StatusEffects.MINING_FATIGUE).getAmplifier() + 1);
-        if (mc.player.isSubmergedIn(FluidTags.WATER)) speed *= (float) mc.player.getAttributeInstance(EntityAttributes.SUBMERGED_MINING_SPEED).getValue();
+        if (mc.player.isSubmergedIn(FluidTags.WATER)) speed *= (float) mc.player.getAttributeInstance(EntityAttributes.PLAYER_SUBMERGED_MINING_SPEED).getValue();
         if (!mc.player.isOnGround()) speed /= 5;
 
         speed = speed < 0 ? 0 : speed;

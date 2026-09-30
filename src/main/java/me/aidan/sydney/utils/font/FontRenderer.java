@@ -11,7 +11,6 @@ import me.aidan.sydney.Sydney;
 import me.aidan.sydney.modules.impl.core.FontModule;
 import me.aidan.sydney.modules.impl.miscellaneous.NameProtectModule;
 import me.aidan.sydney.utils.IMinecraft;
-import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.VertexFormat.DrawMode;
 import net.minecraft.client.util.math.MatrixStack;
@@ -88,7 +87,7 @@ public class FontRenderer implements Closeable, IMinecraft {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
 
-        RenderSystem.setShader(ShaderProgramKeys.POSITION_TEX_COLOR);
+        RenderSystem.setShader(GameRenderer::getPositionTexColorProgram);
 
         Matrix4f matrix4f = matrices.peek().getPositionMatrix();
 

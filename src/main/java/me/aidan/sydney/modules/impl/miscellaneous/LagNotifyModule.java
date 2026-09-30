@@ -28,7 +28,7 @@ public class LagNotifyModule extends Module {
         if(getNull()) return;
 
         if(event.getPacket() instanceof PlayerPositionLookS2CPacket packet) {
-            lagPos = new Vec3d(packet.change().position().getX(), packet.change().position().getY(), packet.change().position().getZ());
+            lagPos = new Vec3d(packet.getX(), packet.getY(), packet.getZ());
             lagDistance = mc.player.getPos().distanceTo(lagPos);
             lagTime = System.currentTimeMillis();
         }
